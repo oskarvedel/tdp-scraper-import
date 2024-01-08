@@ -23,3 +23,20 @@ function handle_import_nl_data()
     exit;
 }
 add_action('admin_post_import_nl_data', 'handle_import_nl_data');
+
+
+function add_remove_nl_data_button($links)
+{
+    $remove_link = '<a href="' . esc_url(admin_url('admin-post.php?action=remove_nl_data')) . '">Remove NL Data</a>';
+    array_unshift($links, $remove_link);
+    return $links;
+}
+add_filter('plugin_action_links_tdp-scraper-import/tdp-scraper-import-plugin.php', 'add_remove_nl_data_button');
+
+function handle_remove_nl_data()
+{
+    remove_nl_data();
+    wp_redirect(admin_url('plugins.php?s=tdp&plugin_status=all'));
+    exit;
+}
+add_action('admin_post_remove_nl_data', 'handle_remove_nl_data');
