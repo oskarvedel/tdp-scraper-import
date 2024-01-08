@@ -3,6 +3,7 @@
 
 function import_nl_scraper_data($file)
 {
+    xdebug_break();
     //get the ids of the unit types and unit links
     $nl_unit_types_ids = get_nl_unit_types();
     $nl_unit_links_ids = get_nl_unit_links();
@@ -136,8 +137,8 @@ function sanitize_data($data)
     return array_map(function ($item) {
         $sanitizedData = array_map(function ($unitData) {
             return array(
-                'm2' => floatval(str_replace(",", ".", str_replace(" m2", "", $unitData['m2']))),
-                'm3' => floatval(str_replace(",", ".", str_replace(" m3", "", $unitData['m3']))),
+                'm2' => str_replace(" m2", "", $unitData['m2']),
+                'm3' => str_replace(" m3", "", $unitData['m3']),
                 'available' => intval(preg_replace("/[^0-9]/", "", $unitData['available'])),
                 'price' => floatval(preg_replace("/[^0-9\.]/", "", $unitData['price']))
             );
