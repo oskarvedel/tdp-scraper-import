@@ -16,7 +16,6 @@ function remove_nl_data()
 
 function import_nl_scraper_data($file)
 {
-    xdebug_break();
     //get the ids and urls of the nl locations
     $nl_locations_urls = get_all_nl_locations_ids_and_nldk_urls();
 
