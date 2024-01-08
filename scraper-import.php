@@ -3,7 +3,6 @@
 
 function import_nl_scraper_data($file)
 {
-    xdebug_break();
     //get the ids of the unit types and unit links
     $nl_unit_types_ids = get_nl_unit_types();
     $nl_unit_links_ids = get_nl_unit_links();
