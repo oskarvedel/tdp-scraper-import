@@ -2,20 +2,33 @@
 
 function remove_nl_data()
 {
+    $batch_size = 100; // Adjust this to a suitable size
+
     $nl_unit_types_ids = get_nl_unit_types();
     $nl_unit_links_ids = get_nl_unit_links();
 
-    foreach ($nl_unit_types_ids as $unit_type_id) {
-        wp_delete_post($unit_type_id, true);
+    $batches_unit_types = array_chunk($nl_unit_types_ids, $batch_size);
+    foreach ($batches_unit_types as $batch) {
+        foreach ($batch as $unit_type_id) {
+            wp_delete_post($unit_type_id, true);
+        }
     }
-    foreach ($nl_unit_links_ids as $unit_link_id) {
-        wp_delete_post($unit_link_id, true);
+
+    $batches_unit_links = array_chunk($nl_unit_links_ids, $batch_size);
+    foreach ($batches_unit_links as $batch) {
+        foreach ($batch as $unit_link_id) {
+            wp_delete_post($unit_link_id, true);
+        }
     }
+
     trigger_error('NL data removed, deleted ' . count($nl_unit_types_ids) . ' unit types and ' .  count($nl_unit_links_ids) . ' unit links', E_USER_NOTICE);
 }
 
 function import_nl_scraper_data($file)
 {
+    //remove the old data
+    remove_nl_data();
+
     //get the ids and urls of the nl locations
     $nl_locations_urls = get_all_nl_locations_ids_and_nldk_urls();
 
@@ -48,46 +61,52 @@ function import_nl_scraper_data($file)
 
     //create the unit links
     create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $user_id);
-    trigger_error('Created NL unit links', E_USER_NOTICE);
+    trigger_error('Created all NL unit links', E_USER_NOTICE);
 }
 
 function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $user_id)
 {
-    //loop through the data and create the unit types and unit links
-    foreach ($sanitized_data as $item) {
-        //get the gd_place id
-        $gd_place_id = array_search($item['url'], $nl_locations_urls);
-        if (!$gd_place_id) {
-            trigger_error('gd_place not found for nettolager url: ' . $item['url'], E_USER_WARNING);
-            continue;
+    $batch_size = 100; // Adjust this to a suitable size
+
+    // Split the data into batches
+    $batches = array_chunk($sanitized_data, $batch_size);
+
+    // Loop through the batches
+    foreach ($batches as $batch) {
+        // Loop through the data in the current batch
+        foreach ($batch as $item) {
+            // Get the gd_place id
+            $gd_place_id = array_search($item['url'], $nl_locations_urls);
+            if (!$gd_place_id) {
+                trigger_error('gd_place not found for nettolager url: ' . $item['url'], E_USER_WARNING);
+                continue;
+            }
+
+            // Create the unit links
+            foreach ($item['singleLocationsUnitData'] as $unitData) {
+                $unit_type_id = array_search(get_unit_type_name($unitData), $unit_types);
+                $unit_link_id = wp_insert_post(array(
+                    'post_title' => get_the_title($gd_place_id)  . ' link: ' . $unitData['m2'] . ' m2 - ' . $unitData['m3'] . ' m3',
+                    'post_type' => 'unit_link',
+                    'post_status' => 'publish',
+                    'post_author' => $user_id
+                ));
+
+                // Set the price and availability
+                update_post_meta($unit_link_id, 'price', $unitData['price']);
+                update_post_meta($unit_link_id, 'available', $unitData['available']);
+
+                // Add the unit type and gd_place to the unit link
+                update_post_meta($unit_link_id, 'rel_type', $unit_type_id);
+                update_post_meta($unit_link_id, 'rel_lokation', $gd_place_id);
+            }
+
+            // Log how many unit links were created for the gd_place
+            trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . get_the_title($gd_place_id), E_USER_NOTICE);
         }
-
-        //create the unit links
-        foreach ($item['singleLocationsUnitData'] as $unitData) {
-            $unit_type_id = array_search(get_unit_type_name($unitData), $unit_types);
-            $unit_link_id = wp_insert_post(array(
-                'post_title' => get_the_title($gd_place_id)  . ' link: ' . $unitData['m2'] . ' m2 - ' . $unitData['m3'] . ' m3',
-                'post_type' => 'unit_link',
-                'post_status' => 'publish',
-                'post_author' => $user_id
-            ));
-
-            //set the price
-            update_post_meta($unit_link_id, 'price', $unitData['price']);
-
-            //set avaliability
-            update_post_meta($unit_link_id, 'available', $unitData['available']);
-
-            //add the unit type and gd_place to the unit link
-            update_post_meta($unit_link_id, 'rel_type', $unit_type_id);
-            update_post_meta($unit_link_id, 'rel_lokation', $gd_place_id);
-        }
-        //log how many unit links were created for the gd_place
-        trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . get_the_title($gd_place_id), E_USER_NOTICE);
-
-        unset($item);
     }
 }
+
 function create_unit_types($unique_units, $user_id)
 {
     $new_unit_types = array(); // Array to store the new unit types
