@@ -2,7 +2,7 @@
 
 function remove_nl_data()
 {
-    $batch_size = 100; // Adjust this to a suitable size
+    $batch_size = 10; // Adjust this to a suitable size
 
     $nl_unit_types_ids = get_nl_unit_types();
     $nl_unit_links_ids = get_nl_unit_links();
@@ -62,11 +62,12 @@ function import_nl_scraper_data($file)
     //create the unit links
     create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $user_id);
     trigger_error('Created all NL unit links', E_USER_NOTICE);
+    return;
 }
 
 function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $user_id)
 {
-    $batch_size = 100; // Adjust this to a suitable size
+    $batch_size = 10; // Adjust this to a suitable size
 
     // Split the data into batches
     $batches = array_chunk($sanitized_data, $batch_size);
