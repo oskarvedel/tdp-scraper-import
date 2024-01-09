@@ -2,7 +2,7 @@
 
 function remove_nl_data()
 {
-    $batch_size = 10; // Adjust this to a suitable size
+    $batch_size = 5; // Adjust this to a suitable size
 
     $nl_unit_types_ids = get_nl_unit_types();
     $nl_unit_links_ids = get_nl_unit_links();
@@ -72,6 +72,9 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
     // Split the data into batches
     $batches = array_chunk($sanitized_data, $batch_size);
 
+    // Use WordPress's built-in object caching, if available, to store titles
+    $cached_titles = [];
+
     // Loop through the batches
     foreach ($batches as $batch) {
         // Loop through the data in the current batch
@@ -83,11 +86,17 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
                 continue;
             }
 
+            // Check if the title is already cached
+            if (!isset($cached_titles[$gd_place_id])) {
+                $cached_titles[$gd_place_id] = get_the_title($gd_place_id);
+            }
+            $title = $cached_titles[$gd_place_id];
+
             // Create the unit links
             foreach ($item['singleLocationsUnitData'] as $unitData) {
                 $unit_type_id = array_search(get_unit_type_name($unitData), $unit_types);
                 $unit_link_id = wp_insert_post(array(
-                    'post_title' => get_the_title($gd_place_id)  . ' link: ' . $unitData['m2'] . ' m2 - ' . $unitData['m3'] . ' m3',
+                    'post_title' => $title  . ' link: ' . $unitData['m2'] . ' m2 - ' . $unitData['m3'] . ' m3',
                     'post_type' => 'unit_link',
                     'post_status' => 'publish',
                     'post_author' => $user_id
@@ -103,10 +112,16 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
             }
 
             // Log how many unit links were created for the gd_place
-            trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . get_the_title($gd_place_id), E_USER_NOTICE);
+            trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . $title, E_USER_NOTICE);
         }
+        // Free memory after processing each batch
+        unset($batch);
     }
+
+    // Free memory by unsetting the cached titles
+    unset($cached_titles);
 }
+
 
 function create_unit_types($unique_units, $user_id)
 {
