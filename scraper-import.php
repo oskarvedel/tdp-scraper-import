@@ -28,6 +28,7 @@ function import_nl_scraper_data($file)
 {
     //remove the old data
     remove_nl_data();
+    sleep(1); // Sleep for 1 second
 
     //get the ids and urls of the nl locations
     $nl_locations_urls = get_all_nl_locations_ids_and_nldk_urls();
@@ -76,13 +77,13 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
     $cached_titles = [];
 
     // Loop through the batches
-    foreach ($batches as $batch) {
+    foreach ($batches as $batch_index => $batch) {
         // Loop through the data in the current batch
         foreach ($batch as $item) {
             // Get the gd_place id
             $gd_place_id = array_search($item['url'], $nl_locations_urls);
             if (!$gd_place_id) {
-                trigger_error('gd_place not found for nettolager url: ' . $item['url'], E_USER_WARNING);
+                // trigger_error('gd_place not found for nettolager url: ' . $item['url'], E_USER_WARNING);
                 continue;
             }
 
@@ -112,7 +113,12 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
             }
 
             // Log how many unit links were created for the gd_place
-            trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . $title, E_USER_NOTICE);
+            //trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . $title, E_USER_NOTICE);
+        }
+        // Optionally sleep after each batch
+        if ($batch_index % 10 == 0) { // Sleep after every 10 batches
+            sleep(1); // Sleep for 1 second
+            trigger_error('Slept for 1 second', E_USER_NOTICE);
         }
         // Free memory after processing each batch
         unset($batch);
@@ -146,7 +152,7 @@ function create_unit_types($unique_units, $user_id)
 
         $new_unit_types[$unit_type_id] = $unit_type_name; // Set the name as the value of the returned array
 
-        trigger_error('Created unit type: ' . $unit_type_name, E_USER_NOTICE);
+        // trigger_error('Created unit type: ' . $unit_type_name, E_USER_NOTICE);
     }
 
     return $new_unit_types; // Return the array of new unit types with names as values
