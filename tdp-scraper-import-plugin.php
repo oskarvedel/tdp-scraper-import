@@ -6,7 +6,6 @@
  */
 
 require_once dirname(__FILE__) . '/scraper-import.php';
-require_once dirname(__FILE__) . '/tdp-common-scraper-import.php';
 
 function add_import_nl_data_button($links)
 {
