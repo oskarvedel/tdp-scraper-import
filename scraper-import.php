@@ -83,7 +83,7 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
             // Get the gd_place id
             $gd_place_id = array_search($item['url'], $nl_locations_urls);
             if (!$gd_place_id) {
-                // trigger_error('gd_place not found for nettolager url: ' . $item['url'], E_USER_WARNING);
+                trigger_error('gd_place not found for nettolager url: ' . $item['url'], E_USER_WARNING);
                 continue;
             }
 
@@ -113,12 +113,7 @@ function create_unit_links($sanitized_data, $nl_locations_urls, $unit_types, $us
             }
 
             // Log how many unit links were created for the gd_place
-            //trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . $title, E_USER_NOTICE);
-        }
-        // Optionally sleep after each batch
-        if ($batch_index % 10 == 0) { // Sleep after every 10 batches
-            sleep(1); // Sleep for 1 second
-            trigger_error('Slept for 1 second', E_USER_NOTICE);
+            trigger_error('Created ' . count($item['singleLocationsUnitData']) . ' NL unit links for gd_place: ' . $title, E_USER_NOTICE);
         }
         // Free memory after processing each batch
         unset($batch);
