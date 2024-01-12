@@ -26,12 +26,13 @@ function remove_nl_data()
 
 function import_nl_scraper_data($file)
 {
+    xdebug_break();
     //remove the old data
     remove_nl_data();
     sleep(1); // Sleep for 1 second
 
     //get the ids and urls of the nl locations
-    $nl_locations_urls = get_all_nl_locations_ids_and_nldk_urls();
+    $nl_locations_urls = get_all_nl_locations_ids_and_partner_department_urls();
 
     // Get the user ID for "nettolager"
     $user = get_user_by('login', 'nettolager');
@@ -197,7 +198,7 @@ function sanitize_data($data)
     }, $data);
 }
 
-function get_all_nl_locations_ids_and_nldk_urls()
+function get_all_nl_locations_ids_and_partner_department_urls()
 {
     $args = array(
         'post_type' => 'gd_place',
@@ -211,8 +212,8 @@ function get_all_nl_locations_ids_and_nldk_urls()
     //the the nldk url for each gd_place
     $posts = array();
     foreach ($ids as $id) {
-        $nldk_url = get_post_meta($id, 'nldk_url', true);
-        $posts[$id] = $nldk_url;
+        $partner_department_url = get_post_meta($id, 'partner_department_url', true);
+        $posts[$id] = $partner_department_url;
     }
 
     return $posts;
