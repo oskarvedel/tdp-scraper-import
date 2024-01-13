@@ -26,7 +26,6 @@ function remove_nl_data()
 
 function import_nl_scraper_data($file)
 {
-    xdebug_break();
     //remove the old data
     remove_nl_data();
     sleep(1); // Sleep for 1 second
