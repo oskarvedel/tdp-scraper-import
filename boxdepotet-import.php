@@ -25,8 +25,9 @@ function remove_boxdepotet_unit_links()
     trigger_error('boxdepotet unit links removed, deleted ' . count($boxdepotet_unit_links_ids) . ' unit links', E_USER_NOTICE);
 }
 
-function import_boxdepotet_scraper_data($file)
+function import_boxdepotet_scraper_data()
 {
+    $file = plugins_url('/data/boxdepotetUnits.json', __FILE__);
     //remove unit links
     remove_boxdepotet_unit_links();
 

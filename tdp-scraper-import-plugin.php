@@ -52,7 +52,7 @@ add_filter('plugin_action_links_tdp-scraper-import/tdp-scraper-import-plugin.php
 
 function handle_import_boxdepotet_data()
 {
-    import_boxdepotet_scraper_data(plugins_url('/data/boxdepotetUnits.json', __FILE__));
+    import_boxdepotet_scraper_data();
     wp_redirect(admin_url('plugins.php?s=tdp&plugin_status=all'));
     exit;
 }
