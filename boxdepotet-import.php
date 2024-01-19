@@ -27,6 +27,8 @@ function remove_boxdepotet_unit_links()
 
 function import_boxdepotet_scraper_data()
 {
+    // xdebug_break();
+
     $file = plugins_url('/data/boxdepotetUnits.json', __FILE__);
     //remove unit links
     remove_boxdepotet_unit_links();
@@ -59,10 +61,15 @@ function import_boxdepotet_scraper_data()
     $existing_unit_types = get_boxdepotet_unit_types();
 
     //create the unit types
-    $unit_types = create_boxdepotet_unit_types($unique_units, $user_id, $existing_unit_types);
-    trigger_error('Created ' . count($unit_types) . ' boxdepotet unit types', E_USER_NOTICE);
+    $new_unit_types = create_boxdepotet_unit_types($unique_units, $user_id, $existing_unit_types);
+    trigger_error('Created ' . count($new_unit_types) . ' boxdepotet unit types', E_USER_NOTICE);
 
     unset($unique_units);
+
+    //set the unit_types to the existing unit types + the new unit types
+    $unit_types = $existing_unit_types + $new_unit_types;
+    //make sure each unit type in the array has a unique id
+    $unit_types = array_unique($unit_types);
 
     //create the unit links
     create_boxdepotet_unit_links($sanitized_data, $boxdepotet_locations_urls, $unit_types, $user_id);
