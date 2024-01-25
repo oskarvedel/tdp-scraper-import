@@ -27,7 +27,19 @@ function remove_boxdepotet_unit_links()
 
 function import_boxdepotet_scraper_data()
 {
-    // xdebug_break();
+    xdebug_break();
+
+    //call https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet to get the latest data
+    $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
+    //set the wp_remote_get timout to 5 minutes
+    add_filter('http_request_timeout', function () {
+        return 300;
+    });
+    $response = wp_remote_get($url);
+    if (is_wp_error($response)) {
+        trigger_error('Error getting boxdepotet data: ' . $response->get_error_message(), E_USER_WARNING);
+        return;
+    }
 
     $file = plugins_url('/data/boxdepotetUnits.json', __FILE__);
     //remove unit links
@@ -45,7 +57,7 @@ function import_boxdepotet_scraper_data()
     }
 
     //open the file and serialize the json data
-    $json = file_get_contents($file);
+    $json = $response['body'];
     $data = json_decode($json, true);
 
     unset($json);
