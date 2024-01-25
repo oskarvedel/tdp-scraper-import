@@ -27,7 +27,7 @@ function remove_boxdepotet_unit_links()
 
 function import_boxdepotet_scraper_data()
 {
-    xdebug_break();
+    // xdebug_break();
 
     //call https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet to get the latest data
     $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
