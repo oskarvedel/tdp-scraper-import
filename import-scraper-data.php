@@ -21,7 +21,7 @@ function import_scraper_data($supplier_name)
             return 300;
         });
         //wake the render service
-        $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/https://www.dr.dk';
+        $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
         trigger_error('sleeping for 60 seconds', E_USER_NOTICE);
