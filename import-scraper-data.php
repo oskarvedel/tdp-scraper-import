@@ -8,7 +8,6 @@ function remove_scraper_data($supplier_name)
 
 function import_scraper_data($supplier_name)
 {
-    xdebug_break();
     // Get the user ID for the supplier
     $user = get_user_by('login', $supplier_name);
     $user_id = $user ? $user->ID : 0; // If the user doesn't exist, use 0
@@ -26,7 +25,7 @@ function import_scraper_data($supplier_name)
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
         trigger_error('sleeping for 60 seconds', E_USER_NOTICE);
-        // sleep(60);
+        sleep(60);
         //call render service to get the latest data
         $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
         $response = wp_remote_get($url);
