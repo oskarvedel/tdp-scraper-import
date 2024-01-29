@@ -27,8 +27,8 @@ function import_scraper_data($supplier_name)
         $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
-        trigger_error('sleeping for 60 seconds to let render spin up', E_USER_NOTICE);
-        sleep(60);
+        trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
+        sleep(30);
         trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //call render service to get the latest data
         $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
