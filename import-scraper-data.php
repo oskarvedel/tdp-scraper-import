@@ -41,12 +41,30 @@ function import_scraper_data($supplier_name)
         $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
 
         $response = wp_remote_get($url);
+
         if (is_wp_error($response)) {
-            trigger_error('Error getting boxdepotet data: ' . $response->get_error_message(), E_USER_WARNING);
+            $error_message = $response->get_error_message();
+            if ('http_request_failed' === $response->get_error_code()) {
+                $error_message = 'The HTTP request timed out.';
+            }
+            trigger_error('Error getting boxdepotet data: ' . $error_message, E_USER_WARNING);
             return;
         }
+
+        //check if the response body is empty
+        if (empty($response['body'])) {
+            trigger_error('boxdepotet response data is empty', E_USER_WARNING);
+            return;
+        }
+
         //open the file and serialize the json data
         $json = $response['body'];
+
+        //check if the json is valid
+        if (!is_json($json)) {
+            trigger_error('boxdepotet response data is not valid json', E_USER_WARNING);
+            return;
+        }
 
         //open the file and serialize the json data
         $data = json_decode($json, true);
