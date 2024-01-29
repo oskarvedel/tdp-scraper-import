@@ -31,7 +31,7 @@ function import_scraper_data($supplier_name)
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
         trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
-        sleep(30);
+        // sleep(30);
         trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //set the timeout to 10 minutes
         add_filter('http_request_timeout', function () {
@@ -60,11 +60,6 @@ function import_scraper_data($supplier_name)
         //open the file and serialize the json data
         $json = $response['body'];
 
-        //check if the json is valid
-        if (!is_json($json)) {
-            trigger_error('boxdepotet response data is not valid json', E_USER_WARNING);
-            return;
-        }
 
         //open the file and serialize the json data
         $data = json_decode($json, true);
@@ -360,10 +355,4 @@ function remove_unit_links($supplier_name)
         wp_delete_post($unit_link_id, true);
     }
     trigger_error($supplier_name . ' unit links removed, deleted ' . count($unit_links_ids) . ' unit links', E_USER_NOTICE);
-}
-
-function is_json($string)
-{
-    json_decode($string);
-    return (json_last_error() == JSON_ERROR_NONE);
 }
