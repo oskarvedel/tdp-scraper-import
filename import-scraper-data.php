@@ -54,6 +54,12 @@ function import_scraper_data($supplier_name)
         //check if the response body is empty
         if (empty($response['body'])) {
             trigger_error('boxdepotet response data is empty', E_USER_WARNING);
+
+            //schedule a new run of the scraper in 5 minutes
+            $timestamp = wp_next_scheduled('scraper');
+            if ($timestamp == false) {
+                wp_schedule_single_event(time() + 300, 'run_scraper', array('boxdepotet'));
+            }
             return;
         }
 
