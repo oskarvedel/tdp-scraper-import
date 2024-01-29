@@ -76,8 +76,9 @@ function handle_import_boxdepotet_data()
 }
 add_action('admin_post_import_boxdepotet_data', 'handle_import_boxdepotet_data');
 
-add_action('scraper', 'run_scraper');
-
-function run_scraper($scraper_name) {
+function run_scraper($scraper_name)
+{
+    trigger_error('run_scraper job called', E_USER_NOTICE);
     import_scraper_data($scraper_name);
 }
+add_action('scraper', 'run_scraper');
