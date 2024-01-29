@@ -17,15 +17,17 @@ function import_scraper_data($supplier_name)
     }
 
     if ($supplier_name == "boxdepotet") {
+        //set the timeout to 10 minutes
         add_filter('http_request_timeout', function () {
-            return 300;
+            return 600;
         });
         //wake the render service
         $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
-        trigger_error('sleeping for 60 seconds', E_USER_NOTICE);
+        trigger_error('sleeping for 60 seconds to let render spin up', E_USER_NOTICE);
         sleep(60);
+        trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //call render service to get the latest data
         $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
         $response = wp_remote_get($url);
@@ -40,7 +42,11 @@ function import_scraper_data($supplier_name)
         $data = json_decode($json, true);
         unset($json);
 
+        //log the data to console
+        trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
+
         //serialize the data
+        // xdebug_break();
         $sanitized_data = sanitize_boxdepotet_data($data);
         unset($data);
     }
