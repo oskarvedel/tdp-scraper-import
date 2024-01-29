@@ -81,4 +81,4 @@ function run_scraper($scraper_name)
     trigger_error('run_scraper job called', E_USER_NOTICE);
     import_scraper_data($scraper_name);
 }
-add_action('scraper', 'run_scraper');
+add_action('run_scraper', 'scraper');
