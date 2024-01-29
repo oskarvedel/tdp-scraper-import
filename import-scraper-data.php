@@ -8,6 +8,7 @@ function remove_scraper_data($supplier_name)
 
 function import_scraper_data($supplier_name)
 {
+    trigger_error('scraper started', E_USER_NOTICE);
     // Get the user ID for the supplier
     $user = get_user_by('login', $supplier_name);
     $user_id = $user ? $user->ID : 0; // If the user doesn't exist, use 0
@@ -21,6 +22,7 @@ function import_scraper_data($supplier_name)
         add_filter('http_request_timeout', function () {
             return 600;
         });
+        trigger_error('waking the render service', E_USER_NOTICE);
         //wake the render service
         $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
         wp_remote_get($url);
@@ -43,7 +45,7 @@ function import_scraper_data($supplier_name)
         unset($json);
 
         //log the data to console
-        trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
+        // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
 
         //serialize the data
         // xdebug_break();
