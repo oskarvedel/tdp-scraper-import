@@ -361,3 +361,9 @@ function remove_unit_links($supplier_name)
     }
     trigger_error($supplier_name . ' unit links removed, deleted ' . count($unit_links_ids) . ' unit links', E_USER_NOTICE);
 }
+
+function is_json($string)
+{
+    json_decode($string);
+    return (json_last_error() == JSON_ERROR_NONE);
+}
