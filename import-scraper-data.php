@@ -60,10 +60,15 @@ function import_scraper_data($supplier_name)
         //open the file and serialize the json data
         $json = $response['body'];
 
-
         //open the file and serialize the json data
         $data = json_decode($json, true);
         unset($json);
+
+        //check if there is any data
+        if (empty($data)) {
+            trigger_error('boxdepotet data is empty', E_USER_WARNING);
+            return;
+        }
 
         //log the data to console
         // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
