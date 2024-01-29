@@ -21,9 +21,9 @@ function import_scraper_data($supplier_name)
 
         trigger_error('waking the render service', E_USER_NOTICE);
 
-        //set the timeout to 10 seconds
+        //set the timeout to 5 seconds
         add_filter('http_request_timeout', function () {
-            return 10;
+            return 5;
         });
         //wake the render service
         $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
