@@ -18,20 +18,28 @@ function import_scraper_data($supplier_name)
     }
 
     if ($supplier_name == "boxdepotet") {
+
+        trigger_error('waking the render service', E_USER_NOTICE);
+
+        //set the timeout to 10 seconds
+        add_filter('http_request_timeout', function () {
+            return 10;
+        });
+        //wake the render service
+        $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
+
+        wp_remote_get($url);
+        //sleep for 1 min while the service spins up
+        trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
+        sleep();
+        trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //set the timeout to 10 minutes
         add_filter('http_request_timeout', function () {
             return 600;
         });
-        trigger_error('waking the render service', E_USER_NOTICE);
-        //wake the render service
-        $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
-        wp_remote_get($url);
-        //sleep for 1 min while the service spins up
-        trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
-        sleep(30);
-        trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //call render service to get the latest data
         $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/boxdepotet';
+
         $response = wp_remote_get($url);
         if (is_wp_error($response)) {
             trigger_error('Error getting boxdepotet data: ' . $response->get_error_message(), E_USER_WARNING);
