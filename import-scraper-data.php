@@ -31,7 +31,7 @@ function import_scraper_data($supplier_name)
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
         trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
-        // sleep(30);
+        sleep(30);
         trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //set the timeout to 10 minutes
         add_filter('http_request_timeout', function () {
