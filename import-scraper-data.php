@@ -58,7 +58,7 @@ function import_scraper_data($supplier_name)
             //schedule a new run of the scraper in 5 minutes
             $timestamp = wp_next_scheduled('scraper');
             if ($timestamp == false) {
-                wp_schedule_single_event(time() + 30, 'run_scraper', array('boxdepotet'));
+                wp_schedule_single_event(time() + 30, 'run_scraper_action', array('boxdepotet'));
             }
             return;
         }
@@ -80,7 +80,6 @@ function import_scraper_data($supplier_name)
         // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
 
         //serialize the data
-        // xdebug_break();
         $sanitized_data = sanitize_boxdepotet_data($data);
         unset($data);
     }
