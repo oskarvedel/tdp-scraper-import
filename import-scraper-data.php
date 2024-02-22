@@ -179,6 +179,11 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
                     update_post_meta($unit_link_id, 'booking_link', $unitData['bookUrl']);
                 }
 
+                //set the supplier_unit_id
+                if ($unitData['supplier_unit_id']) {
+                    update_post_meta($unit_link_id, 'supplier_unit_id', $unitData['supplier_unit_id']);
+                }
+
                 // Add the unit type and gd_place to the unit link
                 update_post_meta($unit_link_id, 'rel_type', $unit_type_id);
                 update_post_meta($unit_link_id, 'rel_lokation', $gd_place_id);
@@ -284,7 +289,8 @@ function sanitize_boxdepotet_data($data)
                 'm3' => str_replace(" m3", "", $unitData['cubicMeters']),
                 'available' => intval(preg_replace("/[^0-9]/", "", $unitData['availability'])),
                 'price' => floatval(preg_replace("/[^0-9\.]/", "", $unitData['price'])),
-                'bookUrl' => $unitData['bookUrl']
+                'bookUrl' => $unitData['bookUrl'],
+                'supplier_unit_id' => $unitData['roomNumber']
             );
         }, $item['roomData']);
 
